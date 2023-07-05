@@ -1,0 +1,19 @@
+.enter-chat {
+    
+    color: rgb(13, 13, 13);
+}
+
+#room-name-input {
+    width: 150px;
+    background-color: rgba(154, 164, 157, 0.399);
+    margin-bottom: 10px;
+}
+
+#room-name-submit {
+    color: rgb(171, 123, 215);
+    width: 150px;
+}
+
+.form-username {
+    color: rgb(23, 89, 89);
+}
