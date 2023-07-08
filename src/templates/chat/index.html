@@ -1,13 +1,55 @@
 {%extends 'flatpages/default.html'%}
-
+{% load static %}
 
 {% block content %}
 
-<p class="enter-chat">What chat room would you like to enter?</p><br>
+<div class="content-index">
+    {% if user.is_authenticated %}
+        <h4>{{user.username}}</h4>
+        {% if user.profile %}
+            <a href="{% url 'accounts:profile' pk=user.profile.id %}">Профиль</a>
+        {% else %}
+            <p>LOGIN</p>
+        {% endif %}
+       
+    {% else %}
+        <h4>Аноним</h4>
+    {% endif %}
+<div class="container-index">
+    <p class="enter-chat">What chat room would you like to enter?</p><br>
     <input id="room-name-input" type="text" size="100" placeholder="Введите название чата"><br>
     <input id="room-name-submit" type="button" value="Перейти">
-
+</div>
+<div class="users-index">
+  <h5>Пользователи</h5>
+  
+  
+  <button id="btn-example" onclick="location.href='http://www.example.com'" type="button">
+    www.example.com</button>
+</div>
+</div>
     <script>
+        const userNamePersonChat = document.querySelector('h4').innerText
+        fetch("http://127.0.0.1:8000/api/users")
+        .then(response => {
+            console.log(response)
+            return response.json()
+        })
+        .then(data => {
+            console.log(data);
+            data.forEach(element => {
+                const userName = `<div class="user-info"><p>${element.username}</p>
+                    <div class="wrapper"><button class="btn" value="${element.username}">${element.id}</button></div></div></div>`;
+                console.log(userName);
+                document.querySelector('h5').insertAdjacentHTML("afterbegin", userName);
+            })
+        })
+        .catch(error =>  {
+            console.log('error', error)
+        });
+
+
+
         document.querySelector('#room-name-input').focus();
         document.querySelector('#room-name-input').onkeyup = function(e) {
             if (e.keyCode === 13) {  // enter, return
@@ -19,5 +61,24 @@
             var roomName = document.querySelector('#room-name-input').value;
             window.location.pathname = '/chat/' + roomName + '/';
         };
+
+        
+        // document.querySelector('.btn-profile').onclick = function(e) {
+        //     console.log('Show all');
+            
+        // };
+
+        const buttonUserId = document.querySelector('.users-index');
+
+        buttonUserId.addEventListener('click', function(event) {
+            console.log(event.target.value);
+            console.log(userNamePersonChat);
+            const roomName = event.target.value + '_' + userNamePersonChat
+            console.log(roomName);
+            window.location.pathname = '/chat/' + roomName + '/';
+
+        });
+
+
     </script>
 {% endblock content %}

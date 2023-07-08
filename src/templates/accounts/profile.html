@@ -1,0 +1,21 @@
+{% extends 'flatpages/default.html' %}
+
+{% block content %}
+<div class="header-bar">
+    <h1>Profile</h1>
+    <button class="btn-main" type="submit" onClick="location.href={% url 'chat:index' %}">Кнопка как ссылка 3</button>
+    <p>{{page_user.about_me}}</p>
+    <p>{{page_user.user.username}}</p>
+    <p>{{page_user.user.id}}</p>
+    {% if page_user.user.email %}
+        <p>{{page_user.user.email}}</p>
+    {% else %}
+        <p>Нет эл.почты</p>
+    {% endif %}
+    <img src="{{page_user.photo.url}}" alt="item" width="300" height="300">
+</div>
+
+
+
+
+{% endblock content %}

@@ -4,7 +4,15 @@
 <h2>Регистрация</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div>
+        {% for field in form %}
+        <div class="form-group">
+            {{field.label_tag}}
+            <div>{{field}}</div>
+            <div class="error">{{field.errors}}</div>
+        </div>
+        {% endfor %}
+        </div>
     <input type="submit" value="Sing up">
 </form>
 
