@@ -2,34 +2,62 @@
 {% load static %}
 
 {% block content %}
-
-<div class="content-index">
-    {% if user.is_authenticated %}
-        <h4>{{user.username}}</h4>
-        {% if user.profile %}
-            <a href="{% url 'accounts:profile' pk=user.profile.id %}">Профиль</a>
+<div class="container">
+    <div class="chats-user">
+        <h2>Мои чаты: </h2>
+        <hr width="250px" class="my-chats">
+    </div>
+    <div class="content-index">
+        {% if user.is_authenticated %}
+            <h4>{{user.username}}</h4>
+            <p class="user-id">{{user.id}}</p>
+            {% if user.profile %}
+                <a href="{% url 'accounts:profile' pk=user.profile.id %}">Профиль</a>
+            {% else %}
+                <p>LOGIN</p>
+            {% endif %}
+        
         {% else %}
-            <p>LOGIN</p>
+            <h4>Аноним</h4>
         {% endif %}
-       
-    {% else %}
-        <h4>Аноним</h4>
-    {% endif %}
-<div class="container-index">
-    <p class="enter-chat">What chat room would you like to enter?</p><br>
-    <input id="room-name-input" type="text" size="100" placeholder="Введите название чата"><br>
-    <input id="room-name-submit" type="button" value="Перейти">
-</div>
-<div class="users-index">
-  <h5>Пользователи</h5>
-  
-  
-  <button id="btn-example" onclick="location.href='http://www.example.com'" type="button">
-    www.example.com</button>
-</div>
+    <div class="container-index">
+        <p class="enter-chat">What chat room would you like to enter?</p><br>
+        <input id="room-name-input" type="text" size="100" placeholder="Введите название чата"><br>
+        <input id="room-name-submit" type="button" value="Перейти">
+    </div>
+    <div class="users-index">
+    <h5>Пользователи</h5>
+    
+    
+    <button id="btn-example" onclick="location.href='http://www.example.com'" type="button">
+        www.example.com</button>
+    </div>
+    </div>
 </div>
     <script>
-        const userNamePersonChat = document.querySelector('h4').innerText
+        
+        const userId = document.querySelector('.user-id').innerText;
+        console.log(userId);
+        
+        fetch("http://127.0.0.1:8000/api/chat_list/" + userId)
+        .then(response => {
+            // console.log(response);
+            return response.json()
+        })
+        .then(data => {
+            console.log(data);
+            data.forEach(element => {
+                console.log(element.chat_name);
+                const chatName = `<div class="${element.chat_name}"><h4>${element.chat_name}</h4><p>Новое сообщение</p><div class="wrapper"><button class="btn-chat-start" value="${element.chat_name}">Перейти к чату</button></div></div>`;
+                document.querySelector('.my-chats').insertAdjacentHTML("afterbegin", chatName);
+            })
+        })
+        .catch(error =>  {
+            console.log('error', error)
+        });
+
+
+        const userNamePersonChat = document.querySelector('h4').innerText;
         fetch("http://127.0.0.1:8000/api/users")
         .then(response => {
             console.log(response)
@@ -69,13 +97,41 @@
         // };
 
         const buttonUserId = document.querySelector('.users-index');
-
+        const url = 'http://127.0.0.1:8000/api/chats/'
         buttonUserId.addEventListener('click', function(event) {
-            console.log(event.target.value);
-            console.log(userNamePersonChat);
-            const roomName = event.target.value + '_' + userNamePersonChat
-            console.log(roomName);
-            window.location.pathname = '/chat/' + roomName + '/';
+            const roomName = event.target.value + '_' + userNamePersonChat;
+            // console.log(roomName);
+
+            const invited = event.target.innerText;
+            // console.log(`Создатель чата юзер ${userId}, приглашенный ${invited}` )
+            // добавить members
+            const data = {'chat_name':roomName,
+                          'members':[userId, invited]};
+            // console.log(data);
+
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                
+            })
+            .then((data) => {
+                console.log(data);
+                window.location.pathname = '/chat/' + roomName + '/';
+            })
+            .catch(error =>  {
+            console.log('error', error);
+            });
+            
+        
+            // console.log(event.target.value);
+            // console.log(userNamePersonChat);
+            
+            // console.log(roomName);
+            // window.location.pathname = '/chat/' + roomName + '/';
 
         });
 

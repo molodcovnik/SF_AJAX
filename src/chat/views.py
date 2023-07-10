@@ -20,19 +20,15 @@ def room(request, room_name):
 
 
 
-def random_code():
-    random.seed()
-    return random.randint(1000, 9999)
-
-def create_chat(request, invited_username):
-    creator = request.user.username
-    chat_name = f'{str(creator)}_{str(invited_username)}'
-    print(chat_name)
-    Chat.objects.create(chat_name=chat_name)
-    return render(request, "chat/room.html", {
-        "room_name": mark_safe(json.dumps(chat_name)),
-        "username": mark_safe(json.dumps(request.user.username))
-    })
+# def create_chat(request, invited_username):
+#     creator = request.user.username
+#     chat_name = f'{str(creator)}_{str(invited_username)}'
+#     print(chat_name)
+#     Chat.objects.create(chat_name=chat_name)
+#     return render(request, "chat/room.html", {
+#         "room_name": mark_safe(json.dumps(chat_name)),
+#         "username": mark_safe(json.dumps(request.user.username))
+#     })
 
 
 

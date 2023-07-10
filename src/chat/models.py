@@ -15,8 +15,9 @@ class Message(models.Model):
         return Message.objects.order_by('-time').all()[:10]
 
 class Chat(models.Model):
-    chat_name = models.TextField(max_length=255)
+    chat_name = models.TextField(max_length=255, unique=True)
     messages = models.ManyToManyField(Message, blank=True)
+    members = models.ManyToManyField(User, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
