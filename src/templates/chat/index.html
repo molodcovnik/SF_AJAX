@@ -12,25 +12,33 @@
             <h4>{{user.username}}</h4>
             <p class="user-id">{{user.id}}</p>
             {% if user.profile %}
-                <a href="{% url 'accounts:profile' pk=user.profile.id %}">Профиль</a>
+            <div class="link-profile">
+                <a href="{% url 'accounts:profile' pk=user.profile.id %}" id="profile-link">Профиль</a>
+            </div>
+                <button id="btn-logout" onclick="location.href='/accounts/logout'" type="button">Выйти из аккаунта</button>
+           
+
             {% else %}
                 <p>LOGIN</p>
             {% endif %}
         
         {% else %}
             <h4>Аноним</h4>
+            <p>Пройдите регистрацию для пользования мессенджером</p>
+            <button id="btn-example" onclick="location.href='/accounts/signup'" type="button">
+        Регистрация</button>
+            <p>или</p>
+            <button id="btn-login" onclick="location.href='/accounts/login'" type="button">
+        Войдите в аккаунт</button>
         {% endif %}
+        
     <div class="container-index">
-        <p class="enter-chat">What chat room would you like to enter?</p><br>
-        <input id="room-name-input" type="text" size="100" placeholder="Введите название чата"><br>
-        <input id="room-name-submit" type="button" value="Перейти">
+        <p id="all-users-message">Все пользователи. Нажмите чтобы посмотреть профиль.</p>
+        
     </div>
     <div class="users-index">
-    <h5>Пользователи</h5>
-    
-    
-    <button id="btn-example" onclick="location.href='http://www.example.com'" type="button">
-        www.example.com</button>
+    <h5>Нажмите на красную кнопку чтобы кому-то написать</h5>
+
     </div>
     </div>
 </div>
@@ -38,7 +46,25 @@
         
         const userId = document.querySelector('.user-id').innerText;
         console.log(userId);
+        // исправить setInterval
         
+        fetch("http://127.0.0.1:8000/api/profiles/")
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            console.log(data);
+            data.forEach(element => {
+                console.log(element.profile)
+                const currentUser = `<div class="current-user-index"><p>${element.username}</p><a href="http://127.0.0.1:8000/accounts/profile/${element.id}/"><img src="${element.photo ? element.photo: "https://media.istockphoto.com/id/587805156/ru/%D0%B2%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D0%BD%D0%B0%D1%8F/%D0%B8%D0%BB%D0%BB%D1%8E%D1%81%D1%82%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%B2%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D0%B0-%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F-%D0%BF%D1%80%D0%BE%D1%84%D0%B8%D0%BB%D1%8F.jpg?s=612x612&w=0&k=20&c=Vasy13hTP6OTfbFcNsMu4OpRZ148nTKgFLOjFv9Za_8="}" alt="photo-user" width="135" height="135" class="current-user"></a></div>`;
+                document.querySelector('#all-users-message').insertAdjacentHTML("afterend", currentUser);
+            })
+        })
+        .catch(error => {
+            console.log('error', error);
+        });
+
+
         fetch("http://127.0.0.1:8000/api/chat_list/" + userId)
         .then(response => {
             // console.log(response);
@@ -48,16 +74,16 @@
             console.log(data);
             data.forEach(element => {
                 console.log(element.chat_name);
-                const chatName = `<div class="${element.chat_name}"><h4>${element.chat_name}</h4><p>Новое сообщение</p><div class="wrapper"><button class="btn-chat-start" value="${element.chat_name}">Перейти к чату</button></div></div>`;
+                const chatName = `<div class="${element.chat_name}"><h4>${element.chat_name}</h4><p>Новое сообщение</p><div class="wrapper-btn"><button class="btn-chat-start" value="${element.chat_name}">Перейти к чату</button></div></div>`;
                 document.querySelector('.my-chats').insertAdjacentHTML("afterbegin", chatName);
             })
         })
         .catch(error =>  {
             console.log('error', error)
         });
-
-
+        
         const userNamePersonChat = document.querySelector('h4').innerText;
+
         fetch("http://127.0.0.1:8000/api/users")
         .then(response => {
             console.log(response)
@@ -69,7 +95,7 @@
                 const userName = `<div class="user-info"><p>${element.username}</p>
                     <div class="wrapper"><button class="btn" value="${element.username}">${element.id}</button></div></div></div>`;
                 console.log(userName);
-                document.querySelector('h5').insertAdjacentHTML("afterbegin", userName);
+                document.querySelector('h5').insertAdjacentHTML("afterend", userName);
             })
         })
         .catch(error =>  {
@@ -78,23 +104,30 @@
 
 
 
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+        // document.querySelector('#room-name-input').focus();
+        // document.querySelector('#room-name-input').onkeyup = function(e) {
+        //     if (e.keyCode === 13) {  // enter, return
+        //         document.querySelector('#room-name-submit').click();
+        //     }
+        // };
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/chat/' + roomName + '/';
-        };
+        // document.querySelector('#room-name-submit').onclick = function(e) {
+        //     var roomName = document.querySelector('#room-name-input').value;
+        //     window.location.pathname = '/chat/' + roomName + '/';
+        // };
 
         
         // document.querySelector('.btn-profile').onclick = function(e) {
         //     console.log('Show all');
             
         // };
+    
+        // chats-user
+        const btnChatLink = document.querySelector('.chats-user');
+
+        btnChatLink.addEventListener('click', function(event) {
+            window.location.pathname = '/chat/' + event.target.value + '/';
+        })
 
         const buttonUserId = document.querySelector('.users-index');
         const url = 'http://127.0.0.1:8000/api/chats/'

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from .models import Profile
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, UpdateView
 # from django.views.generic.edit import FormMixin
 
 from .forms import SignUpForm
@@ -45,6 +45,12 @@ class ProfileView(DetailView):
         page_user = get_object_or_404(Profile, id=self.kwargs['pk'])
         context['page_user'] = page_user
         return context
+
+
+class ProfileEdit(UpdateView):
+    model = Profile
+    fields = ['about_me', 'photo']
+    template_name = 'accounts/update_profile.html'
 
 
 class ProfilesView(ListView):

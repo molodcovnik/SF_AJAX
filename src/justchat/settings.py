@@ -105,7 +105,10 @@ CHANNEL_LAYERS = {
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #     ]
 # }
-
+REST_FRAMEWORK = {
+    
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -163,6 +166,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_REDIRECT_URL = "/chat"
+LOGOUT_REDIRECT_URL = "/chat"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
