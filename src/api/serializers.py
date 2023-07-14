@@ -4,10 +4,10 @@ from accounts.models import Profile
 from chat.models import Chat, Message
 
 class UsersSerializer(serializers.ModelSerializer):
-
+    photo = serializers.FileField(source='profile.photo')
     class Meta:
         model = User
-        fields = ('id', 'username', 'profile',)
+        fields = ('id', 'username', 'profile', 'photo',)
 
 
 class UsersSerializerChatList(serializers.ModelSerializer):

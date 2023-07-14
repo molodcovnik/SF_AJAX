@@ -1,5 +1,6 @@
 from typing import Any
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from django.views.generic.edit import CreateView
 from django.views.generic import DetailView, ListView, UpdateView
 # from django.views.generic.edit import FormMixin
 
-from .forms import SignUpForm
+from .forms import SignUpForm, UserEditForm, ProfileEditForm
 
 
 
@@ -49,7 +50,7 @@ class ProfileView(DetailView):
 
 class ProfileEdit(UpdateView):
     model = Profile
-    fields = ['about_me', 'photo']
+    fields = ['about_me', 'photo', ]
     template_name = 'accounts/update_profile.html'
 
 
@@ -57,3 +58,28 @@ class ProfilesView(ListView):
     model = Profile
     template_name = 'accounts/profiles.html'
     context_object_name = 'profiles'
+
+
+class UserFirstNameEditView(UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'email',]
+    success_url = '/chat'
+    template_name = 'accounts/update_profile.html'
+
+
+# @login_required
+# def edit(request):
+#     if request.method == 'POST':
+#         user_form = UserEditForm(instance=request.user, data=request.POST)
+#         profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
+#         if user_form.is_valid() and profile_form.is_valid():
+#             user_form.save()
+#             profile_form.save()
+#             return HttpResponseRedirect(reverse_lazy('chat:index'))
+#     else:
+#         user_form = UserEditForm(instance=request.user)
+#         profile_form = ProfileEditForm(instance=request.user.profile)
+#         return render(request,
+#                       'accounts/edit_profile.html',
+#                       {'user_form': user_form,
+#                        'profile_form': profile_form})

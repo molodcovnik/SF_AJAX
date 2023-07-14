@@ -14,7 +14,10 @@ class UsersList(generics.ListAPIView):
     serializer_class = UsersSerializer
 
     def get_queryset(self):
-        return User.objects.all().exclude(id=1)
+        user = self.request.user.id
+        admin = User.objects.get(id=1).id
+        list = [user, admin]
+        return User.objects.all().exclude(id__in=list)
 
 
 class ProfileListView(generics.ListAPIView):
@@ -34,6 +37,23 @@ class ChatList(generics.ListCreateAPIView):
     def get_post(self, serializers, chat_name, members):
         serializers.save(chat_name=chat_name,
                          members=members)
+
+    # def put(self, serializers, chat_name, members):
+    #     serializers.save(chat_name=chat_name,
+    #                      members=members)
+
+class ChatUpdate(generics.UpdateAPIView):
+    serializer_class = ChatListSerializers
+
+    def patch(self, request, *args, **kwargs):
+        chat_name = self.kwargs['room_name']
+        user_id = self.request.data['members']
+        print(user_id)
+        user = User.objects.get(id=user_id)
+        chat = Chat.objects.get(chat_name=chat_name)
+        chat.members.add(user)
+        chat.save()
+        return Response(status.HTTP_202_ACCEPTED)
 
 class ChatDetailDestroyView(generics.DestroyAPIView):
     serializer_class = ChatListSerializers
